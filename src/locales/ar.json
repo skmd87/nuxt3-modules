@@ -1,0 +1,10 @@
+{
+  "api-items.request-error": "حدث خطأ أثناء تحميل العناصر، الرجاء الضغط على إعادة المحاولة.",
+  "crud.cancel": "الغاء",
+  "crud.create-item": "إنشاء {itemName}",
+  "crud.error-while-getting": "حدث خطأ أثناء الحصول على البيانات",
+  "crud.retry": "أعد المحاولة",
+  "crud.save": "حفظ",
+  "crud.unknown-error": "خطأ غير معروف",
+  "crud.update-item": "تحديث {itemName}"
+}

@@ -1,0 +1,10 @@
+{
+  "api-items.request-error": "Error has occured while loading items, please click on retry.",
+  "crud.cancel": "Cancel",
+  "crud.create-item": "Create {itemName}",
+  "crud.error-while-getting": "Error While getting Data",
+  "crud.retry": "Retry",
+  "crud.save": "Save",
+  "crud.unknown-error": "Unknown Error",
+  "crud.update-item": "Update {itemName}"
+}

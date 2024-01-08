@@ -2,11 +2,12 @@
     <slot v-bind="$bind" />
 </template>
 <script setup lang="ts">
+import { on } from 'events';
 import dot from 'dot-object'
 import { VSelect } from 'vuetify/components'
 import { useApi } from '../composables/useApi';
 import { t } from '../../helpers'
-import { watch, reactive, useFetch, toRaw, } from '#imports';
+import { shallowReactive, watch, nextTick, useHydration, onMounted, } from '#imports';
 export type ApiItemsProps = {
     /**
      * The URL to fetch data from.
@@ -28,37 +29,36 @@ export type ApiItemsProps = {
 const p = withDefaults(defineProps<ApiItemsProps>(),
     {
         itemsKey: '',
-        ssr: false,
-        apiOptions: () => ({})
+        apiOptions: () => ({}),
+        ssr: false
     }
 )
-const $bind = reactive<InstanceType<typeof VSelect>['$props']>({
+const $bind = shallowReactive<InstanceType<typeof VSelect>['$props']>({
     items: [],
     loading: false,
     error: false,
     errorMessages: [],
 })
 
-// const getData = async () => {
-//     console.log('getData')
-//     $bind.loading = true
-//     if (!p.url) return
-    const { data, error } = await useFetch(p.url, { ...p.apiOptions, server: p.ssr })/* .then(({ data, error }) => {
-        console.log("🚀 ~ file: api-items.vue:47 ~ useFetch ~ data, error:", data, p.itemsKey, data._rawValue, dot.pick(p.itemsKey, toRaw(data.value)))
+const { execute, refresh, data, error } = useApi(p.url, { ...p.apiOptions, server: false, lazy: true })/* .then(async ({ data, error }) => {
+        console.log('data', data.value, 'error', error.value)
+        // if (!p.ssr) {
+        await nextTick();
+        // }
+        console.log('data', data.value, 'error', error.value)
 
         if (error.value) {
             $bind.error = true
             $bind.errorMessages = [t('api-items.request-error')]
             $bind.appendIcon = 'mdi-reload'
             $bind['onClick:append'] = () => getData()
-        } else /* if (data.value) * {
+        } else if (data.value) {
             if (p.itemsKey) {
-                $bind.items = dot.pick(p.itemsKey, data.value) as any[]
+                // $bind.items = data.value[p.itemsKey as keyof typeof data.value] as any[]
+                $bind.items = dot.pick(p.itemsKey, data.value);
             } else {
                 $bind.items = data.value as any[]
             }
-            console.log("🚀 ~ file: api-items.vue:57 ~ useFetch ~ $bind.items:", $bind.items)
-
             // reset error
             $bind.error = false
             $bind.errorMessages = []
@@ -66,18 +66,38 @@ const $bind = reactive<InstanceType<typeof VSelect>['$props']>({
             $bind['onClick:appendInner'] = undefined
         }
         $bind.loading = false
-        return { data, error }
     }) */
-console.log("final", data, p.itemsKey, data.value, dot.pick(p.itemsKey, toRaw(data.value)))
-    setTimeout(() => {
-        console.log("final2", data, p.itemsKey, data.value, dot.pick(p.itemsKey, toRaw(data.value)))
-    }, 1000);
+// const getData = () => {
+//     $bind.loading = true
+//     if (!p.url) return
 
 // }
 
-// watch(() => [p.url, p.apiOptions?.query], () => getData(), { immediate: true })
-// defineExpose({
-//     $bind,
-//     refresh: getData
-// })
+if (error.value) {
+    $bind.error = true
+    $bind.errorMessages = [t('api-items.request-error')]
+    $bind.appendIcon = 'mdi-reload'
+    $bind['onClick:append'] = refresh
+} else if (data.value) {
+    if (p.itemsKey) {
+        // $bind.items = data.value[p.itemsKey as keyof typeof data.value] as any[]
+        $bind.items = dot.pick(p.itemsKey, data.value);
+    } else {
+        $bind.items = data.value as any[]
+    }
+    // reset error
+    $bind.error = false
+    $bind.errorMessages = []
+    $bind.appendIcon = undefined
+    $bind['onClick:appendInner'] = undefined
+}
+$bind.loading = false
+
+onMounted(() => {
+    execute()
+})
+defineExpose({
+    $bind,
+    refresh
+})
 </script>

@@ -35,14 +35,15 @@
             </template>
         </v-data-table>
     </api-items>
-    {{ $bind.apiItems }}
     <v-navigation-drawer v-model="navigationDrawerModel" location="start" temporary>
         <template #prepend>
             <v-card-title> Filter</v-card-title>
         </template>
-        <v-card-text>
-            <slot name="filter" v-bind="$bind.filter" />
-        </v-card-text>
+        <v-lazy>
+            <v-card-text>
+                <slot name="filter" v-bind="$bind.filter" />
+            </v-card-text>
+        </v-lazy>
         <template #append>
             <v-card-actions>
                 <v-btn @click="resetFilter">Reset</v-btn>
@@ -119,7 +120,7 @@ export type ValueComparator = VDataTable['$props']['valueComparator']
 export type Width = VDataTable['$props']['width']
 
 export type VDataTableSlots = VDataTable['$slots']
-export type Model = Record<string, any>
+export type Model = Record<string, string | number>
 export type ToolbarSlots = Readonly<{
     'toolbar.column-Visibility'(props: {
         items: any[]
@@ -489,6 +490,9 @@ const applyFilter = () => {
 
 const resetFilter = () => {
     appliedFilters.value = {}
+    for (const key in $bind.filter.model) {
+        $bind.filter.model[key] = ''
+    }
     closeFilter()
 }
 

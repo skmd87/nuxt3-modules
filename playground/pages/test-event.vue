@@ -15,15 +15,15 @@
 </template>
 
 <script lang="ts" setup >
-// declare module "#Nuxt3Modules" {
-//     interface Events {
-//         'test-event': string;
-//     }
-// }
+declare module "#Nuxt3Modules" {
+    interface Events {
+        'test-event': string;
+    }
+}
 const { emit, on } = useEvent()
 
 const { $emit } = useNuxtApp()
 
-on('test-event', (v: string) => alert(`test-event received ${v}`))
+on('test-event', (v) => alert(`test-event received ${v}`))
 
 </script> 

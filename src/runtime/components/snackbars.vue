@@ -14,10 +14,10 @@
 import { VSnackbar } from 'vuetify/components'
 import defu from 'defu'
 import { useEvent } from '../composables/useEvent'
-import type { SnackbarItem, SnackbarBtn } from '../../types/Snackbar'
-import { ref, watch, computed } from '#imports'
+import type { SnackbarItem } from '../../types/Snackbar'
+import { ref, computed } from '#imports'
 import type { PropType } from '#imports'
-const { on } = useEvent()
+const { on  } = useEvent()
 
 const p = defineProps({
     multiLine: {
@@ -25,13 +25,21 @@ const p = defineProps({
         default: true
     },
     timeout: {
-        type: Number,
+        type: Number as PropType<VSnackbar['$props']['timeout']>,
         default: 6000
     },
     location: {
         type: String as PropType<VSnackbar['$props']['location']>,
         default: ''
-    }
+    },
+    variant: {
+        type: String as PropType<VSnackbar['$props']['variant']>,
+        default: ''
+    },
+    // text: {
+    //     type: String as PropType<VSnackbar['$props']['text']>,
+    //     default: ''
+    // },
 
 })
 
@@ -53,6 +61,7 @@ function removeItem(id: string) {
 
 on('snackbar', (item) => {
     item = defu(item, p) as SnackbarItem
+
     if (item._id === undefined) { item._id = Math.random().toString(36).substr(2, 9) }
 
     if (item.btns === undefined) { item.btns = [] }
@@ -61,13 +70,16 @@ on('snackbar', (item) => {
         return defu(btn, {
             // text: 'Close',
 
-        }) as SnackbarBtn
+        })
     })
     // if not exists
-    if (!queue.value.find(i => i._id === item._id)) { queue.value.push(item) }
+    if (!queue.value.find(i => i._id === item._id)) {
+        queue.value.push(item)
+    }
 })
 
 </script>
+
 <style lang="scss">
 @use 'sass:math';
 

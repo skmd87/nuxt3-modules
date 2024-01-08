@@ -3,8 +3,8 @@
         <v-card-title>Snackbars</v-card-title>
 
         <div>
-            <v-btn block variant="elevated" class="my-2" color="success" v-for="item in snackbarsButtons"
-                @click="snackbar(item.snackbar)">{{ item.btnText }}</v-btn>
+            <v-btn v-for="item in snackbarsButtons" :key="item.btnText" block variant="elevated" class="my-2"
+                color="success" @click="snackbar(item.snackbar)">{{ item.btnText }}</v-btn>
         </div>
 
     </v-container>

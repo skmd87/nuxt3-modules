@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   ],
   nuxt3Modules: {
     crud: true,
+    datatable: true,
     apiItems: true,
     useApi: {
       config(options) {
@@ -18,7 +19,7 @@ export default defineNuxtConfig({
     },
     notifications: true,
     snackbars: true,
-    //pass Event type to module
+    // pass Event type to module
     events: true
   },
   i18n: {

@@ -1,6 +1,7 @@
 {
     "nuxt.isNuxtApp": false,
     "cSpell.words": [
+        "datatable",
         "klona",
         "snackbars"
     ],
@@ -23,5 +24,6 @@
     ],
     "i18n-ally.namespace": false,
     "i18n-ally.extract.keyPrefix": "{fileNameWithoutExt}.",
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "prettier.singleAttributePerLine": false
 }

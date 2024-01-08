@@ -1,9 +1,8 @@
 import { defineNuxtModule, addPlugin, addComponent, createResolver, addImports, installModule, addTypeTemplate } from '@nuxt/kit'
 import type { UseFetchOptions } from 'nuxt/app'
 import defu from 'defu'
-import messages from './locales'
 import { klona } from 'klona'
-// import { type FirebaseOptions } from 'firebase/app'
+import messages from './locales'
 export type useApiConfig = {
   config?: <T>(options: UseFetchOptions<T>) => UseFetchOptions<T> | UseFetchOptions<T>
 }
@@ -13,6 +12,7 @@ export type Messages = Record<string, Record<string, string>>  // { [locale: str
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   crud: boolean,
+  datatable: boolean,
   apiItems: boolean,
   messages: Messages,
   notifications: boolean,
@@ -37,6 +37,7 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults: {
     crud: false,
+    datatable: false,
     apiItems: false,
     notifications: false,
     snackbars: false,
@@ -112,6 +113,14 @@ export default defineNuxtModule<ModuleOptions>({
 
     }
 
+    if (options.datatable) {
+      isVuetifyRequired = true
+      addComponent({
+        filePath: resolver.resolve('./runtime/components/datatable.vue'),
+        name: 'datatable',
+      })
+    }
+
     addImports({
       name: 'useApi',
       as: 'useApi',
@@ -120,6 +129,6 @@ export default defineNuxtModule<ModuleOptions>({
 
 
 
-    //!TBD: check if vuetify is loaded as crud depends on it
+    //! TBD: check if vuetify is loaded as crud depends on it
   }
 })

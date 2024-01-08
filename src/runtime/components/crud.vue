@@ -1,6 +1,6 @@
 <template>
     <ClientOnly>
-        <v-navigation-drawer tag="div" v-model="drawerModel" temporary class="crud" v-bind="computedNavigationDrawerProps"
+        <v-navigation-drawer v-model="drawerModel" tag="div" temporary class="crud" v-bind="computedNavigationDrawerProps"
             @update:model-value="navigationDrawerUpdateHandler">
             <template #prepend>
                 <v-card-title>
@@ -16,7 +16,7 @@
 
             <v-card-text>
                 <v-skeleton-loader type="paragraph@3" :loading="isGetting">
-                    <slot name="error" v-if="hasGettingError" v-bind="{ error: hasGettingError }">
+                    <slot v-if="hasGettingError" name="error" v-bind="{ error: hasGettingError }">
                         <v-banner stacked lines="three" icon="mdi-alert-circle-outline">
                             <template #prepend>
                                 <v-icon color="error">mdi-alert-circle</v-icon>
@@ -25,7 +25,7 @@
                                 <div><b>{{ t('crud.error-while-getting') }}</b></div>
                                 {{ hasGettingError }}
                             </div>
-                            <template v-slot:actions>
+                            <template #actions>
                                 <v-btn variant="plain" @click="close">{{ t('crud.cancel') }}</v-btn>
                                 <v-btn variant="text" color="primary" :loading="$actionsSlot.isSaving" @click="save">
                                     {{ t('crud.retry') }}
@@ -43,7 +43,7 @@
             <template #append>
                 <v-skeleton-loader :loading="isGetting" type="actions">
                     <v-card-actions class="flex-grow-1">
-                        <slot name="actions" v-bind="$actionsSlot" v-if="!hasGettingError">
+                        <slot v-if="!hasGettingError" name="actions" v-bind="$actionsSlot">
                             <v-btn variant="text" @click="close">{{ t('crud.cancel') }}</v-btn>
                             <v-spacer />
                             <v-btn variant="text" color="primary" :loading="$actionsSlot.isSaving" @click="save">
@@ -59,13 +59,12 @@
 </template>
 
 <script  lang="ts" setup>
-import { VNavigationDrawer, VForm, VCardActions, VCard, VCardText, VCardTitle, VBtn, VSpacer, VSkeletonLoader, VBanner } from 'vuetify/components'
-import { ref, type PropType, computed, reactive, toRaw, onMounted } from '#imports';
+import { VNavigationDrawer, VForm, VCardActions, VCardText, VCardTitle, VBtn, VSpacer, VSkeletonLoader, VBanner } from 'vuetify/components'
+import { normalizeURL } from 'ufo'
 import { t } from '../../helpers'
 import { useApi } from '../composables/useApi'
-import { normalizeURL, joinURL } from 'ufo'
-import { useLayout } from 'vuetify/lib/framework.mjs';
 import { useSnackbar } from '../composables/useSnackbar';
+import { ref, type PropType, computed, reactive, toRaw } from '#imports';
 import type { SnackbarItem } from '~/src/types/Snackbar';
 
 type URLVars = Record<string, string | number>
@@ -199,7 +198,7 @@ const parseURL = (method: Parameters<typeof getURLAddressByMethod>[0], URLVars: 
         }, url)
     }
 
-    //remove any words that starts with :
+    // remove any words that starts with :
     url = url.replace(/\/:[^/]+/g, '')
 
     return url
@@ -252,7 +251,7 @@ const openForCreate = (urlVars: URLVars = {}) => {
     drawerModel.value = true
 }
 
-const openForUpdate = async (urlVars: URLVars = {}) => {
+const openForUpdate = (urlVars: URLVars = {}) => {
     currentURLVars.value = urlVars
     action.value = 'update'
     drawerModel.value = true
@@ -327,7 +326,7 @@ const save = () => {
     const body = mapper(toRaw($defaultSlot.item))
     $actionsSlot.isSaving = true
 
-    let url = (isCreateAction.value ? parseURL('post', currentURLVars.value) : parseURL('put', currentURLVars.value)) as string | false
+    const url = (isCreateAction.value ? parseURL('post', currentURLVars.value) : parseURL('put', currentURLVars.value)) as string | false
 
     if (url) {
         console.log("url", url, method)

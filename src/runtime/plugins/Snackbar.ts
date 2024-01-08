@@ -9,7 +9,7 @@ declare module "#app" {
 }
 declare module "#Nuxt3Modules" {
     interface Events {
-        snackbar: SnackbarItem;
+        'snackbar': SnackbarItem;
     }
 }
 export default defineNuxtPlugin(() => {

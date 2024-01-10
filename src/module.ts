@@ -3,16 +3,16 @@ import type { UseFetchOptions } from 'nuxt/app'
 import defu from 'defu'
 import { klona } from 'klona'
 import messages from './locales'
+import type { DatatableDefaults } from './types/Datatable'
 export type useApiConfig = {
   config?: <T>(options: UseFetchOptions<T>) => UseFetchOptions<T> | UseFetchOptions<T>
 }
 
 export type Messages = Record<string, Record<string, string>>  // { [locale: string]: { [key: string]: string } }
-
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   crud: boolean,
-  datatable: boolean,
+  datatable: boolean | DatatableDefaults,
   apiItems: boolean,
   messages: Messages,
   notifications: boolean,
@@ -52,6 +52,11 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.nuxt3Modules = defu(nuxt.options.runtimeConfig.public.nuxt3Modules, klona(options))
 
     const resolver = createResolver(import.meta.url)
+
+    addComponent({
+      filePath: resolver.resolve('./runtime/components/DefaultsProvider.vue'),
+      name: 'DefaultsProvider',
+    })
 
     let isVuetifyRequired = false
 
@@ -114,6 +119,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.datatable) {
+      // eslint-disable-next-line
       isVuetifyRequired = true
       addComponent({
         filePath: resolver.resolve('./runtime/components/datatable.vue'),

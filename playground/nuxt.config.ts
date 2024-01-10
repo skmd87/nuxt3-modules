@@ -1,4 +1,3 @@
-
 export default defineNuxtConfig({
   modules: [
     'vuetify-nuxt-module',
@@ -7,7 +6,16 @@ export default defineNuxtConfig({
   ],
   nuxt3Modules: {
     crud: true,
-    datatable: true,
+    datatable: {
+      totalReqKey: 'total',
+      totalResKey: 'total',
+      itemsPerPage: 10,
+      itemsPerPageReqKey: 'per_page',
+      itemsPerPageResKey: 'per_page',
+      pageReqKey: 'page',
+      pageResKey: 'page',
+      btnsColor: 'primary',
+    },
     apiItems: true,
     useApi: {
       config(options) {
@@ -32,7 +40,13 @@ export default defineNuxtConfig({
     langDir: 'i18n'
 
   },
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true,
+    },
+  },
   vuetify: {
     vuetifyOptions: {
       // localeMessages: {

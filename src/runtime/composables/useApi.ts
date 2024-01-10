@@ -12,7 +12,8 @@ export function useApi<T>(url: string | (() => string), options: UseFetchOptions
         // url, method, headers, etc. - this should be used with care as the key
         // is how Nuxt decides how responses should be deduplicated between
         // client and server
-        key: url instanceof Function ? url() : url,
+
+        // key: url instanceof Function ? url() : url, // this caused all imports of useApi to be connected
 
         // set user token if connected
         headers: userAuth.value

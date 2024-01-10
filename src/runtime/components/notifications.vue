@@ -22,8 +22,8 @@
 
 <script lang="ts" setup>
 import { useNotification } from '@kyvg/vue3-notification'
-import { computed, type PropType } from '#imports'
 import { useRtl } from 'vuetify/lib/framework.mjs';
+import { computed, type PropType } from '#imports'
 
 const p = defineProps({
     group: {

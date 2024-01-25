@@ -1,5 +1,5 @@
-import { useApi } from "./useApi";
 import { type UseFetchOptions, useFetch, useCookie } from '#app'
+import { useApi } from "./useApi";
 import { reactive, toRaw, type Ref, onMounted, shallowReactive, } from "#imports"
 
 export function useApiItems<T>(url: string | (() => string), options?: UseFetchOptions<T>) {
@@ -16,7 +16,7 @@ export function useApiItems<T>(url: string | (() => string), options?: UseFetchO
         if (error.value) {
 
         } else if (data.value) {
-            //@ts-ignore
+            // @ts-ignore
             returnObject.items = data.value
         }
         returnObject.loading = false

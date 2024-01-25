@@ -24,6 +24,7 @@
                             <v-icon>{{ $bind.toolbar.columnVisibility.icon }}</v-icon>
                         </v-btn>
                     </slot>
+                    <v-btn v-bind="$bind.toolbar.fullscreen" />
                     <slot name="toolbar.refresh" v-bind="$bind.toolbar.refresh">
                         <v-btn v-bind="$bind.toolbar.refresh"></v-btn>
                     </slot>
@@ -62,7 +63,7 @@
 <script lang="ts" setup>
 import dot from 'dot-object'
 import { VDataTableServer, VTextField, VBtn, VList } from 'vuetify/components';
-import { useStorage, refDebounced } from '@vueuse/core'
+import { useStorage, refDebounced, useFullscreen } from '@vueuse/core'
 import { klona } from 'klona';
 import defu from 'defu';
 import { DatatableDefaultsSymbol } from '../../types/Datatable'
@@ -513,7 +514,6 @@ const $p = reactive(defu(d, p))
 const computedStorageKey = computed(() => {
     return `Nuxt3Modules.table.headers:${$p.tableStorageKey || $p.url || 'default'}`
 })
-
 const columnVisibilityStorageState = useStorage<string[]>(computedStorageKey.value, [])
 const slots = useSlots()
 
@@ -525,8 +525,11 @@ const searchRef = ref<typeof VTextField | null>()
 const searchModel = ref<string | null>(null)
 // @ts-ignore
 const debouncedSearchModel = refDebounced<string | null>(searchModel, 400)
+// @ts-ignore
+const { isFullscreen, toggle } = useFullscreen(vDataTableRef)
 const navigationDrawerModel = ref<boolean>(false)
 const selectedHiddenColumns = ref<string[]>([...columnVisibilityStorageState.value])
+
 
 watch(() => selectedHiddenColumns.value, (value) => {
     columnVisibilityStorageState.value = value
@@ -580,6 +583,7 @@ const $bind = reactive<{
         page: ComputedRef<VDataTableServer['$props']['page']>
         loading: ComputedRef<boolean>,
         headers: ComputedRef<Headers>
+        // [keyof ComponentProps<typeof VDataTableServer>]: ComponentProps<typeof VDataTableServer>
     },
     toolbar: {
         search: ComponentProps<typeof VTextField>,
@@ -599,11 +603,17 @@ const $bind = reactive<{
             icon: VBtn['$props']['icon']
             color: Color,
             onClick: () => void
+        },
+        fullscreen: {
+            icon: ComputedRef<string>,
+            color: Color,
+            onClick: () => void
         }
     },
     filter: {
         model: Model
-    }
+    },
+
 }>({
     apiItems: {
         url: computed(() => {
@@ -626,6 +636,7 @@ const $bind = reactive<{
         })
     },
     datatable: {
+        ...$p,
         items: computed(() => {
             if ($p.url) {
                 return apiItemsRef.value?.$bind.items
@@ -705,6 +716,16 @@ const $bind = reactive<{
             icon: 'mdi-filter-plus',
             color: $p.btnsColor as string,
             onClick: showFilter
+        },
+        fullscreen: {
+            icon: computed(() => {
+                if (isFullscreen.value) {
+                    return 'mdi-fullscreen-exit'
+                }
+                return 'mdi-fullscreen'
+            }),
+            color: $p.btnsColor as string,
+            onClick: toggle
         }
     },
     filter: {

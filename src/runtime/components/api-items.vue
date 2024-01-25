@@ -53,9 +53,9 @@ const $bind = computed<{
     'onClick:append'?: () => void
 }>(() => {
     const items = computed<any[]>(() => {
-        if (p.itemsKey && typeof data?.value === 'object') {
+        if (p.itemsKey && typeof data.value === 'object') {
             // $bind.items = data.value[p.itemsKey as keyof typeof data.value] as any[]
-            const extractedItems = dot.pick(p.itemsKey, data?.value);
+            const extractedItems = dot.pick(p.itemsKey, data.value);
             if (Array.isArray(extractedItems)) {
                 return extractedItems
             }
@@ -69,9 +69,13 @@ const $bind = computed<{
     })
 
     const errorMessages = []
-    if (error?.value) {
+    let appendIcon = ''
+    if (error.value) {
         errorMessages.push(t('api-items.request-error'))
+        appendIcon = 'mdi-reload'
     }
+
+
 
     return {
         items: items.value,
@@ -79,6 +83,8 @@ const $bind = computed<{
         error: !!error?.value,
         errorMessages,
         data: data?.value,
+        appendIcon,
+        'onClick:append': refresh,
     }
 })
 
